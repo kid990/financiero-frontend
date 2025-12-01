@@ -1,0 +1,22 @@
+npm install vue axios vue-router
+npm install jwt-decode
+npm install sweetalert2
+npm install lucide-vue-next
+npm install chart.js
+
+
+
+
+
+CREATE TABLE usuarios (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    email VARCHAR(150) UNIQUE NOT NULL,
+    telefono VARCHAR(20),
+    contrasena VARCHAR(255) NOT NULL,
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    activo BOOLEAN DEFAULT TRUE,
+    rol ENUM('usuario', 'administrador') DEFAULT 'usuario'
+);
