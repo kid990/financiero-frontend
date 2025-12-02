@@ -18,7 +18,7 @@ import FormHeader from './FormHeader.vue';
 import InputField from '../ui/InputField.vue';
 import SelectField from '../ui/SelectField.vue';
 
-const API_URL = "http://localhost:8000";
+const API_URL = "https://api-financiero.onrender.com";
 
 const emit = defineEmits(['update:datosCliente', 'update:pasoActual', 'update:resultado', 'reiniciar']);
 

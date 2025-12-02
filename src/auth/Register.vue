@@ -247,7 +247,7 @@ const handleRegister = async () => {
 
   try {
     // Realizamos la solicitud POST con Axios
-    const response = await axios.post('http://127.0.0.1:8000/register', {
+    const response = await axios.post('https://api-financiero.onrender.com/register', {
       nombre: form.value.nombre,
       apellido: form.value.apellido,
       email: form.value.email,
