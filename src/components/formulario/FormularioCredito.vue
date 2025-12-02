@@ -293,18 +293,18 @@ onMounted(() => {
           </div>
 
           <!-- Campos con InputField -->
-          <InputField v-model="formulario.edad" label="Edad" type="number" :icon="Calendar" :error="errores.edad" :min="18" :max="75" />
-          <InputField v-model="formulario.dependientes" label="Dependientes" type="number" :icon="Users" :error="errores.dependientes" :min="0" :max="10" />
-          <InputField v-model="formulario.ingreso_mensual" label="Ingreso Mensual (S/)" type="number" :icon="DollarSign" :error="errores.ingreso_mensual" :min="0" :step="100" />
-          <InputField v-model="formulario.present_emp_since" label="Anos en Empleo" type="number" :icon="Clock" :error="errores.present_emp_since" :min="0" :max="12" />
-          <InputField v-model="formulario.monto_prestamo" label="Monto Solicitado (S/)" type="number" :icon="Banknote" :error="errores.monto_prestamo" :min="1000" :step="1000" />
+          <InputField v-model="formulario.edad" label="Edad" type="number" :icon="Calendar" :error="errores.edad" :min="18" :max="75" :disabled="!dniValidado" />
+          <InputField v-model="formulario.dependientes" label="Dependientes" type="number" :icon="Users" :error="errores.dependientes" :min="0" :max="10" :disabled="!dniValidado" />
+          <InputField v-model="formulario.ingreso_mensual" label="Ingreso Mensual (S/)" type="number" :icon="DollarSign" :error="errores.ingreso_mensual" :min="0" :step="100" :disabled="!dniValidado" />
+          <InputField v-model="formulario.present_emp_since" label="Anos en Empleo" type="number" :icon="Clock" :error="errores.present_emp_since" :min="0" :max="12" :disabled="!dniValidado" />
+          <InputField v-model="formulario.monto_prestamo" label="Monto Solicitado (S/)" type="number" :icon="Banknote" :error="errores.monto_prestamo" :min="1000" :step="1000" :disabled="!dniValidado" />
 
           <!-- Campos con SelectField -->
-          <SelectField v-model="formulario.estado_civil" label="Estado Civil" :options="opcionesEstadoCivil" :icon="Heart" :error="errores.estado_civil" />
-          <SelectField v-model="formulario.tipo_empleo" label="Tipo Empleo" :options="opcionesTipoEmpleo" :icon="Briefcase" :error="errores.tipo_empleo" />
-          <SelectField v-model="formulario.vivienda" label="Vivienda" :options="opcionesVivienda" :icon="Home" :error="errores.vivienda" />
-          <SelectField v-model="formulario.tipo_prestamo" label="Tipo Prestamo" :options="opcionesTipoPrestamo" :icon="FileText" :error="errores.tipo_prestamo" />
-          <SelectField v-model="formulario.meses" label="Plazo (meses)" :options="opcionesMesesFormateado" :icon="CalendarDays" :error="errores.meses" valueKey="value" labelKey="label" />
+          <SelectField v-model="formulario.estado_civil" label="Estado Civil" :options="opcionesEstadoCivil" :icon="Heart" :error="errores.estado_civil" :disabled="!dniValidado" />
+          <SelectField v-model="formulario.tipo_empleo" label="Tipo Empleo" :options="opcionesTipoEmpleo" :icon="Briefcase" :error="errores.tipo_empleo" :disabled="!dniValidado" />
+          <SelectField v-model="formulario.vivienda" label="Vivienda" :options="opcionesVivienda" :icon="Home" :error="errores.vivienda" :disabled="!dniValidado" />
+          <SelectField v-model="formulario.tipo_prestamo" label="Tipo Prestamo" :options="opcionesTipoPrestamo" :icon="FileText" :error="errores.tipo_prestamo" :disabled="!dniValidado" />
+          <SelectField v-model="formulario.meses" label="Plazo (meses)" :options="opcionesMesesFormateado" :icon="CalendarDays" :error="errores.meses" valueKey="value" labelKey="label" :disabled="!dniValidado" />
 
         </div>
         

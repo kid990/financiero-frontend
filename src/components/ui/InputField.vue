@@ -42,7 +42,7 @@ const borderClass = computed(() => {
         :maxlength="maxlength"
         :step="step"
         :disabled="disabled"
-        class="w-full border rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        class="w-full border rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
         :class="borderClass"
       />
     </div>
