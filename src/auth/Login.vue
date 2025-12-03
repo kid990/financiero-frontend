@@ -5,6 +5,7 @@ import axios from "axios";
 import { Mail, Lock } from "lucide-vue-next";
 
 const router = useRouter();
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const form = ref({
   email: "",
@@ -17,11 +18,10 @@ const error = ref("");
 const success = ref("");
 const showPassword = ref(false);
 
-// Verificar si ya hay un token y redirigir a Evaluación si el usuario está autenticado
 onMounted(() => {
   const token = localStorage.getItem("token");
   if (token) {
-    router.push("/evaluacion");
+    router.push("/dashboard");
   }
 });
 
@@ -34,10 +34,8 @@ const handleLogin = async () => {
   error.value = "";
   success.value = "";
 
-  
-
   try {
-    const response = await axios.post("https://api-financiero.onrender.com/login", {
+    const response = await axios.post(`${API_URL}/login`, {
       email: form.value.email,
       password: form.value.password,
       remember: form.value.remember,

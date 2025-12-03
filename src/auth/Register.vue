@@ -218,6 +218,7 @@ import axios from 'axios';
 import { User, Mail, Phone, Lock } from 'lucide-vue-next';
 
 const router = useRouter();
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const form = ref({
   nombre: '',
@@ -238,7 +239,6 @@ const handleRegister = async () => {
   error.value = '';
   success.value = '';
 
-  // Validación de contraseñas
   if (form.value.password !== form.value.confirmPassword) {
     error.value = 'Las contraseñas no coinciden';
     loading.value = false;
@@ -246,17 +246,16 @@ const handleRegister = async () => {
   }
 
   try {
-    // Realizamos la solicitud POST con Axios
-    const response = await axios.post('https://api-financiero.onrender.com/register', {
+    const response = await axios.post(`${API_URL}/register`, {
       nombre: form.value.nombre,
       apellido: form.value.apellido,
       email: form.value.email,
       telefono: form.value.telefono,
       password: form.value.password,
-      rol: 'usuario', // O el rol que desees por defecto
+      rol: 'usuario',
     });
 
-      console.log('📩 Respuesta del backend:', response.data);
+      console.log('Respuesta del backend:', response.data);
 
     if (response.data.success) {
       success.value = '¡Registro exitoso! Redirigiendo...';

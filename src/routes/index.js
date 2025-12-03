@@ -1,21 +1,25 @@
 import { createWebHistory, createRouter } from 'vue-router'
-import {jwtDecode} from 'jwt-decode'  // Importar jwt-decode
+import {jwtDecode} from 'jwt-decode'
 
 import Auth from '../auth/Auth.vue'
 import Login from '../auth/Login.vue'
 import Register from '../auth/Register.vue'
-import Evaluacion from '../components/Evaluacion.vue'
+import DashboardLayout from '../components/dashboard/DashboardLayout.vue'
+import DashboardHome from '../components/dashboard/DashboardHome.vue'
+import SolicitudNueva from '../components/dashboard/SolicitudNueva.vue'
+import SolicitudRegistros from '../components/dashboard/SolicitudRegistros.vue'
+import ResultadosView from '../components/dashboard/ResultadosView.vue'
 
 const routes = [
   {
     path: '/',
-    redirect: '/login'  // Redirige la raíz a la página de login
+    redirect: '/login'
   },
   {
     path: '/',
     component: Auth,
     meta: {
-      requiresGuest: true  // Solo usuarios no autenticados pueden acceder
+      requiresGuest: true
     },
     children: [
       {
@@ -31,58 +35,77 @@ const routes = [
     ]
   },
   {
-    path: '/evaluacion',
-    name: 'Evaluacion',
-    component: Evaluacion,
+    path: '/dashboard',
+    component: DashboardLayout,
     meta: {
-      requiresAuth: true  // Solo usuarios autenticados pueden acceder
-    }
+      requiresAuth: true
+    },
+    children: [
+      {
+        path: '',
+        name: 'DashboardHome',
+        component: DashboardHome
+      },
+      {
+        path: 'solicitud/nueva',
+        name: 'SolicitudNueva',
+        component: SolicitudNueva
+      },
+      {
+        path: 'solicitud/registros',
+        name: 'SolicitudRegistros',
+        component: SolicitudRegistros
+      },
+      {
+        path: 'resultados',
+        name: 'Resultados',
+        component: ResultadosView
+      }
+    ]
   },
   {
-    path: '/:pathMatch(.*)*',  // Ruta comodín para rutas no encontradas
+    path: '/evaluacion',
+    redirect: '/dashboard'
+  },
+  {
+    path: '/:pathMatch(.*)*',
     name: 'NotFound',
-    redirect: '/login'  // Redirige a login si la ruta no existe
+    redirect: '/login'
   }
 ]
 
 const router = createRouter({
-  history: createWebHistory(),  // Usar el historial del navegador
+  history: createWebHistory(),
   routes,
 })
 
-// Guardia de navegación global
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token')  // Obtén el token JWT de localStorage
-  const isAuthenticated = !!token  // Determina si el usuario está autenticado
+  const token = localStorage.getItem('token')
+  const isAuthenticated = !!token
 
-  // Si el token está presente, verificar si ha expirado
   if (isAuthenticated) {
     try {
-      const decodedToken = jwtDecode(token);  // Decodificar el token
-      const isExpired = decodedToken.exp * 1000 < Date.now();  // Comparar la fecha de expiración con la fecha actual
+      const decodedToken = jwtDecode(token);
+      const isExpired = decodedToken.exp * 1000 < Date.now();
 
       if (isExpired) {
-        localStorage.removeItem('token');  // Eliminar el token si ha expirado
-        next('/login');  // Redirigir al login si el token ha expirado
+        localStorage.removeItem('token');
+        next('/login');
         return;
       }
     } catch (error) {
-      // Si el token no se puede decodificar (por ejemplo, si no es válido), eliminar el token
       localStorage.removeItem('token');
-      next('/login');  // Redirigir al login si hay un error al decodificar el token
+      next('/login');
       return;
     }
   }
 
-  // Si la ruta requiere autenticación y el usuario no está autenticado
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next('/login');  // Redirige a login si no está autenticado
+    next('/login');
   }
-  // Si la ruta requiere ser un invitado y el usuario está autenticado
   else if (to.meta.requiresGuest && isAuthenticated) {
-    next('/evaluacion');  // Redirige a evaluacion si el usuario ya está autenticado
+    next('/dashboard');
   }
-  // Permite la navegación si no hay restricciones
   else {
     next()
   }
