@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import axios from '../../axios';
 import Swal from 'sweetalert2';
 import { Search, Play, Eye, ChevronLeft, ChevronRight, RefreshCw } from 'lucide-vue-next';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const loading = ref(false);
@@ -91,28 +93,8 @@ const evaluarSolicitud = async (solicitudId: number) => {
   }
 };
 
-const verResultado = async (solicitudId: number) => {
-  try {
-    const response = await axios.get(`${API_URL}/resultado/${solicitudId}`);
-    const r = response.data;
-    
-    Swal.fire({
-      title: r.califica ? 'APROBADO' : 'RECHAZADO',
-      html: `
-        <div class="text-left">
-          <p><strong>Probabilidad:</strong> ${(r.probabilidad * 100).toFixed(2)}%</p>
-          <p><strong>Monto Aprobado:</strong> S/ ${r.monto_aprobado?.toLocaleString() || 0}</p>
-          <p><strong>Plazo:</strong> ${r.plazo_meses} meses</p>
-          <p><strong>Tasa Anual:</strong> ${r.tasa_interes_anual}%</p>
-          <p><strong>Cuota Mensual:</strong> S/ ${r.cuota_mensual?.toLocaleString() || 0}</p>
-          <p><strong>Total a Pagar:</strong> S/ ${r.total_a_pagar?.toLocaleString() || 0}</p>
-        </div>
-      `,
-      icon: r.califica ? 'success' : 'error'
-    });
-  } catch (error) {
-    Swal.fire('Error', 'No se encontro resultado para esta solicitud', 'warning');
-  }
+const verResultado = (dni: string) => {
+  router.push(`/dashboard/resultados/${dni}`);
 };
 
 const getEstadoClass = (estado: string) => {
@@ -253,7 +235,7 @@ const getEstadoClass = (estado: string) => {
                   </button>
                   <button
                     v-if="sol.estado_solicitud !== 'pendiente'"
-                    @click="verResultado(sol.id)"
+                    @click="verResultado(sol.dni)"
                     class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded transition-colors"
                     title="Ver resultado"
                   >

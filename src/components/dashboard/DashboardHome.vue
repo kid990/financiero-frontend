@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
-import axios from 'axios';
+import axios from '../../axios';
 import { FileText, CheckCircle, XCircle, Clock, TrendingUp, TrendingDown, Activity } from 'lucide-vue-next';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';

@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import axios from 'axios';
+import { ref, onMounted } from 'vue';
+import axios from '../../axios';
 import Swal from 'sweetalert2';
 import { Search, Download } from 'lucide-vue-next';
 import html2pdf from 'html2pdf.js';
+import { useRoute } from 'vue-router';
 
+const route = useRoute();
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const loading = ref(false);
@@ -39,6 +41,14 @@ const buscarResultados = async () => {
     loading.value = false;
   }
 };
+
+onMounted(() => {
+  const dniParam = route.params.dni as string;
+  if (dniParam && dniParam.length === 8) {
+    dniBuscar.value = dniParam;
+    buscarResultados();
+  }
+});
 
 const formatMoney = (value: number) => {
   return value?.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00';

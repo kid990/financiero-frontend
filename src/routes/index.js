@@ -60,6 +60,11 @@ const routes = [
         path: 'resultados',
         name: 'Resultados',
         component: ResultadosView
+      },
+      {
+        path: 'resultados/:dni',
+        name: 'ResultadosDni',
+        component: ResultadosView
       }
     ]
   },

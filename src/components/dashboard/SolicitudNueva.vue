@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import axios from 'axios';
+import axios from '../../axios';
 import Swal from 'sweetalert2';
 import { useRouter } from 'vue-router';
 import { Search } from 'lucide-vue-next';
@@ -50,6 +50,16 @@ const buscarCliente = async () => {
     const response = await axios.post(`${API_URL}/consultar-cliente`, {
       dni: formulario.value.dni
     });
+
+    if (response.data.tiene_pendiente) {
+      Swal.fire({
+        title: 'Solicitud Pendiente',
+        html: `Este cliente ya tiene una solicitud pendiente de evaluación.<br><br><strong>ID de solicitud:</strong> ${response.data.solicitud_id}`,
+        icon: 'warning',
+        confirmButtonText: 'Entendido'
+      });
+      return;
+    }
 
     if (response.data.encontrado) {
       const nombres = response.data.nombre.split(' ');
