@@ -10,14 +10,15 @@ const route = useRoute();
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const loading = ref(false);
-const dniBuscar = ref('');
+const busqueda = ref('');
 const resultado = ref<any>(null);
 const cliente = ref<any>(null);
 const documentoRef = ref<HTMLElement | null>(null);
+const dniBuscado = ref('');
 
 const buscarResultados = async () => {
-  if (!dniBuscar.value || dniBuscar.value.length !== 8) {
-    Swal.fire('Error', 'Ingresa un DNI válido de 8 dígitos', 'error');
+  if (!busqueda.value) {
+    Swal.fire('Error', 'Ingresa un DNI o ID de solicitud', 'error');
     return;
   }
 
@@ -26,14 +27,34 @@ const buscarResultados = async () => {
   cliente.value = null;
   
   try {
-    const response = await axios.get(`${API_URL}/resultados/${dniBuscar.value}`);
-    const data = response.data;
+    const valor = busqueda.value.trim();
+    let response;
     
-    if (data.resultados && data.resultados.length > 0) {
-      resultado.value = data.resultados[0];
-      cliente.value = data.cliente || null;
+    if (valor.length === 8 && /^\d+$/.test(valor)) {
+      // Buscar por DNI
+      response = await axios.get(`${API_URL}/resultados/${valor}`);
+      dniBuscado.value = valor;
+      const data = response.data;
+      
+      if (data.resultados && data.resultados.length > 0) {
+        resultado.value = data.resultados[0];
+        cliente.value = data.cliente || null;
+      } else {
+        Swal.fire('Info', 'No se encontraron resultados para este DNI', 'info');
+      }
+    } else if (/^\d+$/.test(valor)) {
+      // Buscar por ID de solicitud
+      response = await axios.get(`${API_URL}/resultado/${valor}`);
+      const data = response.data;
+      
+      if (data) {
+        resultado.value = data;
+        dniBuscado.value = data.dni || '';
+      } else {
+        Swal.fire('Info', 'No se encontró resultado para esta solicitud', 'info');
+      }
     } else {
-      Swal.fire('Info', 'No se encontraron resultados para este DNI', 'info');
+      Swal.fire('Error', 'Ingresa un DNI (8 dígitos) o ID de solicitud', 'error');
     }
   } catch (error) {
     Swal.fire('Error', 'Error al buscar resultados', 'error');
@@ -43,9 +64,9 @@ const buscarResultados = async () => {
 };
 
 onMounted(() => {
-  const dniParam = route.params.dni as string;
-  if (dniParam && dniParam.length === 8) {
-    dniBuscar.value = dniParam;
+  const param = route.params.dni as string;
+  if (param) {
+    busqueda.value = param;
     buscarResultados();
   }
 });
@@ -68,7 +89,7 @@ const descargarPDF = () => {
   
   const opciones = {
     margin: 10,
-    filename: `constancia_${dniBuscar.value}_${resultado.value.id}.pdf`,
+    filename: `constancia_${dniBuscado.value || resultado.value.solicitud_id}_${resultado.value.id}.pdf`,
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { scale: 2 },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
@@ -86,9 +107,9 @@ const descargarPDF = () => {
         <h1 class="text-sm font-semibold text-gray-700">Consulta de Resultados</h1>
         <div class="flex gap-2 justify-end">
           <input
-            v-model="dniBuscar"
+            v-model="busqueda"
             type="text"
-            maxlength="8"
+            placeholder="DNI o ID de solicitud"
             class="w-80 px-3 py-2 text-xs border border-gray-300 rounded focus:outline-none focus:border-gray-400"
             @keyup.enter="buscarResultados"
           />
@@ -157,7 +178,7 @@ const descargarPDF = () => {
           <table class="w-full text-xs">
             <tr>
               <td class="py-1.5 text-gray-500 w-1/3">Documento de Identidad:</td>
-              <td class="py-1.5 text-gray-700">{{ dniBuscar }}</td>
+              <td class="py-1.5 text-gray-700">{{ dniBuscado || 'N/A' }}</td>
             </tr>
             <tr v-if="cliente">
               <td class="py-1.5 text-gray-500">Nombre Completo:</td>
@@ -240,14 +261,14 @@ const descargarPDF = () => {
 
       <!-- Código de verificación -->
       <div class="bg-gray-100 px-6 py-2 text-center text-xs text-gray-400 border-t border-gray-200">
-        Codigo de verificacion: {{ resultado.id }}-{{ resultado.solicitud_id }}-{{ dniBuscar }}
+        Codigo de verificacion: {{ resultado.id }}-{{ resultado.solicitud_id }}-{{ dniBuscado || 'N/A' }}
       </div>
     </div>
 
     <!-- Mensaje vacío -->
     <div v-if="!resultado && !loading" class="bg-gray-50 border border-gray-200 rounded p-8 text-center">
       <Search class="w-8 h-8 text-gray-300 mx-auto mb-3" />
-      <p class="text-xs text-gray-400">Ingresa un DNI para buscar el resultado de evaluacion</p>
+      <p class="text-xs text-gray-400">Ingresa un DNI o ID de solicitud para buscar el resultado</p>
     </div>
   </div>
 </template>

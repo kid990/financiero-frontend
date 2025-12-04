@@ -66,7 +66,11 @@ const handleLogin = async () => {
       error.value = response.data.message || "Credenciales incorrectas";
     }
   } catch (err) {
-    error.value = "Error de conexión. Por favor, intenta nuevamente.";
+    if (err.response && err.response.data && err.response.data.detail) {
+      error.value = err.response.data.detail;
+    } else {
+      error.value = "Error de conexión. Por favor, intenta nuevamente.";
+    }
     console.error("Login error:", err);
   } finally {
     loading.value = false;

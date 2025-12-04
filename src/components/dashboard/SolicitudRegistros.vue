@@ -93,8 +93,8 @@ const evaluarSolicitud = async (solicitudId: number) => {
   }
 };
 
-const verResultado = (dni: string) => {
-  router.push(`/dashboard/resultados/${dni}`);
+const verResultado = (solicitudId: number) => {
+  router.push(`/dashboard/resultados/${solicitudId}`);
 };
 
 const getEstadoClass = (estado: string) => {
@@ -235,7 +235,7 @@ const getEstadoClass = (estado: string) => {
                   </button>
                   <button
                     v-if="sol.estado_solicitud !== 'pendiente'"
-                    @click="verResultado(sol.dni)"
+                    @click="verResultado(sol.id)"
                     class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded transition-colors"
                     title="Ver resultado"
                   >

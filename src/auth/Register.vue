@@ -267,7 +267,11 @@ const handleRegister = async () => {
       error.value = response.data.message || 'Error al registrar el usuario';
     }
   } catch (err) {
-    error.value = 'Error de conexión. Por favor, intenta nuevamente.';
+    if (err.response && err.response.data && err.response.data.detail) {
+      error.value = err.response.data.detail;
+    } else {
+      error.value = 'Error de conexión. Por favor, intenta nuevamente.';
+    }
     console.error('Registro error:', err);
   } finally {
     loading.value = false;
